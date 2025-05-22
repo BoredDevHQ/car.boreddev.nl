@@ -176,7 +176,29 @@
             height: 24px;
         }
         
+        .title-section {
+            text-align: center;
+            margin-top: 100px;
+            padding: 2rem;
+        }
 
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subsubtitle {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
 
         .cat-logo {
         width: 32px;
@@ -188,16 +210,23 @@
 <body>
     <header>
         <div class="logo">
+            <!-- Cat face SVG Logo -->
             <img class="cat-logo" src="icons8-cat-96.png">
             car
         </div>
     </header>
 
+    <div class="title-section">
+        <h1 class="main-title">The unlimited cat scroll of DOOMMMMM</h1>
+        <p class="subtitle">You are not allowed to leave this site until you have reached the bottom</p>
+        <p class="subsubtitle">(which is never)</p>
+    </div>
+
     <div class="gallery-container">
         <div class="masonry-grid" id="cat-grid"></div>
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
-            <p>Loading car...</p>
+            <p>Loading more adorable cats...</p>
         </div>
     </div>
 
@@ -208,26 +237,31 @@
     </button>
 
     <script>
-
+        // Elements
         const catGrid = document.getElementById('cat-grid');
         const loadingElement = document.getElementById('loading');
         const scrollTopButton = document.getElementById('scrollTop');
         
+        // Variables
         let isLoading = false;
         let page = 1;
         const imagesPerLoad = 12;
         
-
+        // API endpoints
+        // Using the free TheCatAPI
         const CAT_API_URL = 'https://api.thecatapi.com/v1/images/search';
         
+        // Load initial cats
         loadCats();
         
+        // Function to load cats
         async function loadCats() {
             if (isLoading) return;
             
             isLoading = true;
             
             try {
+                // Compose URL with parameters for multiple images
                 const url = `${CAT_API_URL}?limit=${imagesPerLoad}`;
                 
                 const response = await fetch(url);
@@ -250,6 +284,7 @@
             }
         }
         
+        // Create a cat card element
         function createCatCard(imageUrl) {
             const card = document.createElement('div');
             card.className = 'cat-card';
@@ -257,11 +292,13 @@
             const img = document.createElement('img');
             img.className = 'cat-image';
             img.src = imageUrl;
-            img.alt = 'car';
+            img.alt = 'Adorable cat';
             
+            // Add loading animation
             img.loading = 'lazy';
             
             img.onerror = () => {
+                // Handle image loading error
                 img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="%23FF6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>';
             };
             
@@ -270,20 +307,24 @@
             return card;
         }
         
+        // Infinite scroll detection
         window.addEventListener('scroll', () => {
             const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
             
+            // Show/hide scroll to top button
             if (scrollTop > 300) {
                 scrollTopButton.classList.add('visible');
             } else {
                 scrollTopButton.classList.remove('visible');
             }
             
+            // Check if user has scrolled to the bottom
             if (scrollTop + clientHeight >= scrollHeight - 200 && !isLoading) {
                 loadCats();
             }
         });
         
+        // Scroll to top button handler
         scrollTopButton.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
@@ -291,12 +332,14 @@
             });
         });
         
+        // Preload more cats as user interacts with the page
         document.addEventListener('mousemove', debounce(() => {
             if (!isLoading && Math.random() > 0.7) {
                 loadCats();
             }
         }, 1000));
         
+        // Utility function for debouncing
         function debounce(func, wait) {
             let timeout;
             return function() {
